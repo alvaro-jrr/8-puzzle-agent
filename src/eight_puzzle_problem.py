@@ -1,4 +1,5 @@
 from enum import Enum
+import random
 
 import helpers
 
@@ -75,6 +76,27 @@ class EightPuzzleProblem:
 
     # If the number of inversions is even, the board is solvable.
     return helpers.count_inversions(initial_tiles) % 2 == helpers.count_inversions(goal_tiles) % 2
+
+  @staticmethod
+  def generate_random_state() -> list[list[int]]:
+    '''
+    Generate a random board state.
+    '''
+    tiles = list(range(9))
+    random.shuffle(tiles)
+
+    return [tiles[i:i+3] for i in range(0, len(tiles), 3)]
+
+  @staticmethod
+  def generate_random_solvable_state(goal_state: list[list[int]]) -> list[list[int]]:
+    '''
+    Generate a random solvable board state.
+    '''
+    while True:
+      state = EightPuzzleProblem.generate_random_state()
+
+      if (EightPuzzleProblem.can_reach_goal(state, goal_state)):
+        return state
 
   @staticmethod
   def get_blank_tile_position(state: list[list[int]]) -> tuple[int, int]:
