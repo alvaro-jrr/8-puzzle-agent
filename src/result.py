@@ -13,6 +13,19 @@ class Solution:
   def __init__(self, node: EightPuzzleNode):
     self.node = node
 
+  def show(self) -> None:
+    '''
+    Show the solution.
+    '''
+    states = self.node.get_states()
+
+    for index, state in enumerate(states):
+      for row in state:
+        print(f'|{row[0]} {row[1]} {row[2]}|')
+
+      if (index < len(states) - 1):
+        print()
+
 class FailureType(Enum):
   '''
   The type of failure for the 8-puzzle problem.
@@ -40,4 +53,9 @@ class Failure:
     self.type = type
 
   def get_reason(self) -> str:
-    return self._reasons[self.type]
+    reason = self._reasons[self.type]
+
+    if (reason is None):
+      return "Unknown failure."
+
+    return reason
