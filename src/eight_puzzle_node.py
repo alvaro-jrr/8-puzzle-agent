@@ -1,4 +1,6 @@
-from eight_puzzle_problem import EightPuzzleProblem, EightPuzzleAction
+from typing import Optional
+
+from eight_puzzle_problem import EightPuzzleAction, EightPuzzleProblem
 
 class EightPuzzleNode:
   '''
@@ -6,10 +8,10 @@ class EightPuzzleNode:
   '''
 
   # The parent node.
-  parent: 'EightPuzzleNode' | None
+  parent: Optional['EightPuzzleNode']
 
   # The action that led to this node.
-  action: EightPuzzleAction | None
+  action: Optional[EightPuzzleAction]
 
   # The state of the node.
   state: list[list[int]]
@@ -17,7 +19,7 @@ class EightPuzzleNode:
   # The path cost of the node.
   path_cost: int
 
-  def __init__(self, state: list[list[int]], parent: 'EightPuzzleNode' | None, action: EightPuzzleAction | None, path_cost: int):
+  def __init__(self, state: list[list[int]], parent: Optional['EightPuzzleNode'], action: Optional[EightPuzzleAction], path_cost: int = 0):
     self.state = state
     self.parent = parent
     self.action = action
