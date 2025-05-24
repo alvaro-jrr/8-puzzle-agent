@@ -31,9 +31,9 @@ class EightPuzzleProblem:
     if not EightPuzzleProblem.is_valid_board(goal_state):
       raise AssertionError("Invalid goal state")
 
-    # Check if the board is solvable.
-    if not EightPuzzleProblem.is_solvable(initial_state):
-      raise AssertionError("Board is not solvable from the initial state")
+    # Check if the initial state can reach the goal state.
+    if not EightPuzzleProblem.can_reach_goal(initial_state, goal_state):
+      raise AssertionError("Goal state cannot be reached from given initial state")
 
     self.initial_state = initial_state
     self.goal_state = goal_state
@@ -66,14 +66,15 @@ class EightPuzzleProblem:
     return True
 
   @staticmethod
-  def is_solvable(state: list[list[int]]) -> bool:
+  def can_reach_goal(initial_state: list[list[int]], goal_state: list[list[int]]) -> bool:
     '''
-    Check if the board is solvable.
+    Wether the initial state can reach the goal state.
     '''
-    tiles = [tile for row in state for tile in row if tile != 0]
+    initial_tiles = [tile for row in initial_state for tile in row if tile != 0]
+    goal_tiles = [tile for row in goal_state for tile in row if tile != 0]
 
     # If the number of inversions is even, the board is solvable.
-    return helpers.count_inversions(tiles) % 2 == 0
+    return helpers.count_inversions(initial_tiles) % 2 == helpers.count_inversions(goal_tiles) % 2
 
   @staticmethod
   def get_blank_tile_position(state: list[list[int]]) -> tuple[int, int]:
@@ -104,7 +105,8 @@ class EightPuzzleProblem:
     if (action == EightPuzzleAction.RIGHT):
       return (x + 1, y)
 
-  def is_valid_position(self, x: int, y: int) -> bool:
+  @staticmethod
+  def is_valid_position(x: int, y: int) -> bool:
     '''
     Check if the position is valid for the board.
     '''
@@ -123,11 +125,18 @@ class EightPuzzleProblem:
     return EightPuzzleProblem.is_valid_position(x, y)
 
   @staticmethod
-  def get_available_actions(state: list[list[int]]) -> list[EightPuzzleAction]:
+  def actions(state: list[list[int]]) -> list[EightPuzzleAction]:
     '''
     Get the available actions for the board in the current state.
     '''
     return [action for action in EightPuzzleAction if EightPuzzleProblem.is_valid_action(state, action)]
+
+  @staticmethod
+  def state_to_tuple(state: list[list[int]]) -> tuple[tuple[int, ...], ...]:
+    '''
+    Convert the state to a tuple.
+    '''
+    return tuple(tuple(row) for row in state)
 
   def goal_test(self, state: list[list[int]]) -> bool:
     '''
@@ -150,9 +159,8 @@ class EightPuzzleProblem:
     swap_tile = state[swap_x][swap_y]
     blank_tile = state[blank_x][blank_y]
 
-    new_state = state.copy()
-
     # Swap the tiles.
+    new_state = [row[:] for row in state] 
     new_state[blank_x][blank_y] = swap_tile
     new_state[swap_x][swap_y] = blank_tile
 
