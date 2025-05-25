@@ -58,12 +58,12 @@ def main() -> None:
     # Ask the user for the next action.
     next_action = get_next_action()
 
-    if (next_action == MenuAction.EXIT):
+    if (next_action == NextAction.EXIT):
       running = False
     else:
       helpers.clear_cli()
 
-      if (next_action == MenuAction.CHANGE_AGENT_TYPE):
+      if (next_action == NextAction.CHANGE_AGENT_TYPE):
         agent = None
 
 def get_agent_type() -> EightPuzzleAgentType:
@@ -89,18 +89,18 @@ def get_agent_type() -> EightPuzzleAgentType:
   return [EightPuzzleAgentType.INFORMED, EightPuzzleAgentType.UNINFORMED][agent_type - 1]
 
 
-class MenuAction(Enum):
+class NextAction(Enum):
   '''
-  The type of agent for the 8-puzzle problem.
+  The next action to take.
   '''
   SOLVE_NEW_PROBLEM = 0
   CHANGE_AGENT_TYPE = 1
   EXIT = 2
 
 
-def get_next_action() -> MenuAction:
+def get_next_action() -> NextAction:
   '''
-  Test the agent.
+  Gets the next action to take.
   '''
   # The options.
   options = [
@@ -121,7 +121,7 @@ def get_next_action() -> MenuAction:
   )
 
   # Return the action.
-  return [MenuAction.SOLVE_NEW_PROBLEM, MenuAction.CHANGE_AGENT_TYPE, MenuAction.EXIT][action - 1]
+  return [NextAction.SOLVE_NEW_PROBLEM, NextAction.CHANGE_AGENT_TYPE, NextAction.EXIT][action - 1]
 
 def on_solution(solution: Solution, time_taken: float) -> None:
   '''
