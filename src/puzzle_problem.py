@@ -3,19 +3,22 @@ import random
 
 import helpers
 
-class EightPuzzleAction(Enum):
+class PuzzleAction(Enum):
   '''
-  The action of the 8-puzzle problem.
+  The action of the puzzle problem.
   '''
   UP = 0
   DOWN = 1
   LEFT = 2
   RIGHT = 3
 
-class EightPuzzleProblem:
+class PuzzleProblem:
   '''
-  The 8-puzzle problem.
+  The puzzle problem.
   '''
+  
+  # The size of the board.
+  BOARD_SIZE = 2
 
   # The initial state of the board.
   initial_state: list[list[int]]
@@ -25,11 +28,11 @@ class EightPuzzleProblem:
 
   def __init__(self, initial_state: list[list[int]], goal_state: list[list[int]]):
     # Check if the initial state is a valid board.
-    if not EightPuzzleProblem.is_valid_board(initial_state):
+    if not PuzzleProblem.is_valid_board(initial_state):
       raise AssertionError("Invalid initial state")
 
     # Check if the goal state is a valid board.
-    if not EightPuzzleProblem.is_valid_board(goal_state):
+    if not PuzzleProblem.is_valid_board(goal_state):
       raise AssertionError("Invalid goal state")
 
     self.initial_state = initial_state
@@ -41,20 +44,22 @@ class EightPuzzleProblem:
     Check if the board is a 3x3 grid of integers.
     '''
 
-    # Check if the board has 3 rows.
-    if (len(state) != 3):
+    # Check if the board has the correct number of rows.
+    if (len(state) != PuzzleProblem.BOARD_SIZE):
       return False
 
-    # Check if the board has 3 columns.
-    if (any(len(row) != 3 for row in state)):
+    # Check if the board has the correct number of columns.
+    if (any(len(row) != PuzzleProblem.BOARD_SIZE for row in state)):
       return False
 
     tiles: set[int] = set()
 
+    max_tile = PuzzleProblem.BOARD_SIZE**2 - 1
+
     # Check if the board contains only numbers between 0 and 8 and no duplicates.
     for row in state:
       for tile in row:
-        if (tile < 0 or tile > 8) or (tile in tiles):
+        if (tile < 0 or tile > max_tile) or (tile in tiles):
           return False
 
         # Add the tile to the set of tiles.
@@ -78,10 +83,10 @@ class EightPuzzleProblem:
     '''
     Generate a random board state.
     '''
-    tiles = list(range(9))
+    tiles = list(range(PuzzleProblem.BOARD_SIZE**2))
     random.shuffle(tiles)
 
-    return [tiles[i:i+3] for i in range(0, len(tiles), 3)]
+    return [tiles[i:i+PuzzleProblem.BOARD_SIZE] for i in range(0, len(tiles), PuzzleProblem.BOARD_SIZE)]
 
   @staticmethod
   def generate_random_solvable_state(goal_state: list[list[int]]) -> list[list[int]]:
@@ -89,9 +94,9 @@ class EightPuzzleProblem:
     Generate a random solvable board state.
     '''
     while True:
-      state = EightPuzzleProblem.generate_random_state()
+      state = PuzzleProblem.generate_random_state()
 
-      if (EightPuzzleProblem.can_reach_goal(state, goal_state)):
+      if (PuzzleProblem.can_reach_goal(state, goal_state)):
         return state
 
   @staticmethod
@@ -109,25 +114,25 @@ class EightPuzzleProblem:
     '''
     Returns the position of the blank tile in the board.
     '''
-    return EightPuzzleProblem.get_position(state, 0)
+    return PuzzleProblem.get_position(state, 0)
 
   @staticmethod
-  def get_swap_tile_position(state: list[list[int]], action: EightPuzzleAction) -> tuple[int, int]:
+  def get_swap_tile_position(state: list[list[int]], action: PuzzleAction) -> tuple[int, int]:
     '''
     Returns the position of the tile to swap with the blank tile from the action.
     '''
-    (x, y) = EightPuzzleProblem.get_blank_tile_position(state)
+    (x, y) = PuzzleProblem.get_blank_tile_position(state)
 
-    if (action == EightPuzzleAction.UP):
+    if (action == PuzzleAction.UP):
       return (x, y - 1)
 
-    if (action == EightPuzzleAction.DOWN):
+    if (action == PuzzleAction.DOWN):
       return (x, y + 1)
 
-    if (action == EightPuzzleAction.LEFT):
+    if (action == PuzzleAction.LEFT):
       return (x - 1, y)
 
-    if (action == EightPuzzleAction.RIGHT):
+    if (action == PuzzleAction.RIGHT):
       return (x + 1, y)
 
   @staticmethod
@@ -135,26 +140,26 @@ class EightPuzzleProblem:
     '''
     Check if the position is valid for the board.
     '''
-    return (x >= 0 and x <= 2) and (y >= 0 and y <= 2)
+    return (x >= 0 and x <= PuzzleProblem.BOARD_SIZE - 1) and (y >= 0 and y <= PuzzleProblem.BOARD_SIZE - 1)
 
   @staticmethod
-  def is_valid_action(state: list[list[int]], action: EightPuzzleAction) -> bool:
+  def is_valid_action(state: list[list[int]], action: PuzzleAction) -> bool:
     '''
     Check if the action is valid for the board.
     '''
 
     # Find the tile to swap.
-    (x, y) = EightPuzzleProblem.get_swap_tile_position(state, action)
+    (x, y) = PuzzleProblem.get_swap_tile_position(state, action)
 
     # Check if the position is valid.
-    return EightPuzzleProblem.is_valid_position(x, y)
+    return PuzzleProblem.is_valid_position(x, y)
 
   @staticmethod
-  def actions(state: list[list[int]]) -> list[EightPuzzleAction]:
+  def actions(state: list[list[int]]) -> list[PuzzleAction]:
     '''
     Get the available actions for the board in the current state.
     '''
-    return [action for action in EightPuzzleAction if EightPuzzleProblem.is_valid_action(state, action)]
+    return [action for action in PuzzleAction if PuzzleProblem.is_valid_action(state, action)]
 
   @staticmethod
   def state_to_tuple(state: list[list[int]]) -> tuple[tuple[int, ...], ...]:
@@ -198,16 +203,16 @@ class EightPuzzleProblem:
     '''
     return state == self.goal_state
 
-  def result(self, state: list[list[int]], action: EightPuzzleAction) -> tuple[int, list[list[int]]]:
+  def result(self, state: list[list[int]], action: PuzzleAction) -> tuple[int, list[list[int]]]:
     '''
     Apply the action to the state and returns the step-cost and the new state.
     '''
-    if (EightPuzzleProblem.is_valid_action(state, action) is False):
+    if (PuzzleProblem.is_valid_action(state, action) is False):
       return (0, state)
 
     # Find the blank tile and the tile to swap.
-    (blank_x, blank_y) = EightPuzzleProblem.get_blank_tile_position(state)
-    (swap_x, swap_y) = EightPuzzleProblem.get_swap_tile_position(state, action)
+    (blank_x, blank_y) = PuzzleProblem.get_blank_tile_position(state)
+    (swap_x, swap_y) = PuzzleProblem.get_swap_tile_position(state, action)
 
     # Get the tiles to swap.
     swap_tile = state[swap_x][swap_y]

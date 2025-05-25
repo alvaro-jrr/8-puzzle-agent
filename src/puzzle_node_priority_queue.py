@@ -1,14 +1,14 @@
 from typing import Optional
 
-from eight_puzzle_node import EightPuzzleNode
+from puzzle_node import PuzzleNode
 
-class EightPuzzleNodePriorityQueue:
+class PuzzleNodePriorityQueue:
   '''
-  A priority queue for 8-puzzle nodes.
+  A priority queue for puzzle nodes.
   '''
 
   # The queue.
-  __queue: list[EightPuzzleNode] = []
+  __queue: list[PuzzleNode] = []
 
   def empty(self) -> bool:
     '''
@@ -16,33 +16,33 @@ class EightPuzzleNodePriorityQueue:
     '''
     return len(self.__queue) == 0
 
-  def append(self, node: EightPuzzleNode) -> None:
+  def append(self, node: PuzzleNode) -> None:
     '''
     Append a node to the queue.
     '''
     self.__queue.append(node)
     self.__queue.sort(key=lambda x: x.estimated_solution_cost)
 
-  def pop(self) -> EightPuzzleNode:
+  def pop(self) -> PuzzleNode:
     '''
     Pop the node with the lowest estimated solution cost.
     '''
     return self.__queue.pop(0)
 
-  def remove(self, node: EightPuzzleNode) -> None:
+  def remove(self, node: PuzzleNode) -> None:
     '''
     Remove a node from the queue.
     '''
     self.__queue.remove(node)
 
-  def replace(self, current_node: EightPuzzleNode, new_node: EightPuzzleNode) -> None:
+  def replace(self, current_node: PuzzleNode, new_node: PuzzleNode) -> None:
     '''
     Replace a node in the queue.
     '''
     self.__queue.remove(current_node)
     self.append(new_node)
 
-  def find_by_state(self, target_state: list[list[int]]) -> Optional[EightPuzzleNode]:
+  def find_by_state(self, target_state: list[list[int]]) -> Optional[PuzzleNode]:
     '''
     Find a node in the queue that matches the target state.
     '''

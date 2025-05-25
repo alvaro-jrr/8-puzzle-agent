@@ -1,6 +1,7 @@
 from enum import Enum
 
-from eight_puzzle_node import EightPuzzleNode
+from puzzle_node import PuzzleNode
+from puzzle_problem import PuzzleProblem
 
 class Solution:
   '''
@@ -8,9 +9,9 @@ class Solution:
   '''
 
   # The node that represents the solution.
-  node: EightPuzzleNode
+  node: PuzzleNode
 
-  def __init__(self, node: EightPuzzleNode):
+  def __init__(self, node: PuzzleNode):
     self.node = node
 
   def show(self) -> None:
@@ -21,7 +22,8 @@ class Solution:
 
     for step, state in enumerate(states):
       for row_index, row in enumerate(state):
-        print(f'{f'Step {step}' if row_index == 0 else ''}\t|{row[0]} {row[1]} {row[2]}|')
+        row_format = '|' + ' '.join(['{}'] * PuzzleProblem.BOARD_SIZE) + '|'
+        print(f'{f'Step {step}' if row_index == 0 else ''}\t{row_format.format(*row)}')
 
       if (step < len(states) - 1):
         print()

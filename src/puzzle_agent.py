@@ -1,56 +1,56 @@
 from enum import Enum
 from typing import Union
 
-from eight_puzzle_node import EightPuzzleNode
-from eight_puzzle_node_priority_queue import EightPuzzleNodePriorityQueue
-from eight_puzzle_problem import EightPuzzleProblem
+from puzzle_node import PuzzleNode
+from puzzle_node_priority_queue import PuzzleNodePriorityQueue
+from puzzle_problem import PuzzleProblem
 from result import Failure, FailureType, Solution
 
-class EightPuzzleAgentType(Enum):
+class PuzzleAgentType(Enum):
   '''
-  The type of agent for the 8-puzzle problem.
+  The type of agent for the puzzle problem.
   '''
   INFORMED = 0
   UNINFORMED = 1
 
-class EightPuzzleAgent:
+class PuzzleAgent:
   '''
-  The agent for the 8-puzzle problem.
+  The agent for the puzzle problem.
   '''
 
   # The type of agent.
-  type: EightPuzzleAgentType
+  type: PuzzleAgentType
 
-  def __init__(self, type: EightPuzzleAgentType):
+  def __init__(self, type: PuzzleAgentType):
     self.type = type
 
-  def solve(self, problem: EightPuzzleProblem) -> Union[Solution, Failure]:
+  def solve(self, problem: PuzzleProblem) -> Union[Solution, Failure]:
     '''
-    Solve the 8-puzzle problem using the given agent type.
+    Solve the puzzle problem using the given agent type.
     '''
     # Check if the initial state can reach the goal state.
-    if not EightPuzzleProblem.can_reach_goal(problem.initial_state, problem.goal_state):
+    if not PuzzleProblem.can_reach_goal(problem.initial_state, problem.goal_state):
       return Failure(FailureType.UNSOLVABLE)
 
     # Apply an informed search algorithm.
-    if (self.type == EightPuzzleAgentType.INFORMED):
+    if (self.type == PuzzleAgentType.INFORMED):
       return self.a_star_search(problem)
 
     # Apply an uninformed search algorithm.
     return self.breadth_first_search(problem)
 
-  def breadth_first_search(self, problem: EightPuzzleProblem) -> Union[Solution, Failure]:
+  def breadth_first_search(self, problem: PuzzleProblem) -> Union[Solution, Failure]:
     '''
-    Breadth-first search for the 8-puzzle problem.
+    Breadth-first search for the puzzle problem.
     '''
-    node = EightPuzzleNode(state=problem.initial_state, path_cost=0)
+    node = PuzzleNode(state=problem.initial_state, path_cost=0)
 
     # The initial state is the goal state.
     if (problem.goal_test(node.state)):
       return Solution(node)
 
     # The list of nodes to be explored.
-    frontier: list[EightPuzzleNode] = [node]
+    frontier: list[PuzzleNode] = [node]
 
     # The set of frontier states.
     frontier_states: set[tuple[tuple[int, ...], ...]] = set()
@@ -71,7 +71,7 @@ class EightPuzzleAgent:
 
       # Explore the child nodes for the actions.
       for action in problem.actions(node.state):
-        child = EightPuzzleNode.child_node(problem, node, action)
+        child = PuzzleNode.child_node(problem, node, action)
         child_state_tuple = problem.state_to_tuple(child.state)
 
         # If the state is not explored and not in frontier, then is a new state to check.
@@ -85,14 +85,14 @@ class EightPuzzleAgent:
     
     return Failure(FailureType.SOLUTION_NOT_FOUND)
 
-  def a_star_search(self, problem: EightPuzzleProblem) -> Union[Solution, Failure]:
+  def a_star_search(self, problem: PuzzleProblem) -> Union[Solution, Failure]:
     '''
-    A* search for the 8-puzzle problem.
+    A* search for the puzzle problem.
     '''
-    node = EightPuzzleNode(state=problem.initial_state, path_cost=0)
+    node = PuzzleNode(state=problem.initial_state, path_cost=0)
     
     # The open priority queue with the initial state as the first element.
-    frontier = EightPuzzleNodePriorityQueue()
+    frontier = PuzzleNodePriorityQueue()
     frontier.append(node)
 
     # The set of frontier states.
@@ -117,7 +117,7 @@ class EightPuzzleAgent:
       explored.add(node_state_tuple)
 
       for action in problem.actions(node.state):
-        child = EightPuzzleNode.child_node(problem, node, action, calculate_cost_to_goal=True)
+        child = PuzzleNode.child_node(problem, node, action, calculate_cost_to_goal=True)
         child_state_tuple = problem.state_to_tuple(child.state)
 
         if ((child_state_tuple not in explored) and (child_state_tuple not in frontier_states)):
@@ -129,7 +129,7 @@ class EightPuzzleAgent:
           frontier_node = frontier.find_by_state(child.state)
 
           # Wether the current element in the frontier should be replaced.
-          should_replace = isinstance(frontier_node, EightPuzzleNode) and (child.estimated_solution_cost < frontier_node.estimated_solution_cost)
+          should_replace = isinstance(frontier_node, PuzzleNode) and (child.estimated_solution_cost < frontier_node.estimated_solution_cost)
           
           # Replace the frontier node as long as the new estimated solution cost is lower.
           if should_replace:
