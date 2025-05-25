@@ -19,11 +19,11 @@ class Solution:
     '''
     states = self.node.get_states()
 
-    for index, state in enumerate(states):
-      for row in state:
-        print(f'|{row[0]} {row[1]} {row[2]}|')
+    for step, state in enumerate(states):
+      for row_index, row in enumerate(state):
+        print(f'{f'Step {step}' if row_index == 0 else ''}\t|{row[0]} {row[1]} {row[2]}|')
 
-      if (index < len(states) - 1):
+      if (step < len(states) - 1):
         print()
 
 class FailureType(Enum):

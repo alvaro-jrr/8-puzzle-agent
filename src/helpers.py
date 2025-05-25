@@ -1,3 +1,5 @@
+import os
+
 def count_inversions(items: list[int]) -> int:
   '''
   Counts the number of inversions in the list.
@@ -56,3 +58,34 @@ def sort_and_count(items: list[int]) -> tuple[list[int], int]:
   (sorted_items, count) = merge_and_count(sorted_a, sorted_b)
 
   return sorted_items, count + count_a + count_b
+
+def show_options(options: list[str]) -> None:
+  '''
+  Show the options.
+  '''
+  for index, option in enumerate(options):
+    print(f'{index + 1}) {option}')
+
+  print()
+
+def get_range_input(prompt: str, min: int, max: int, range_error_message: str) -> int:
+  '''
+  Get an integer input within a range.
+  '''
+  while True:
+    try:
+      value = int(input(prompt))
+      print()
+
+      if (value < min or value > max):
+        print(range_error_message)
+      else:
+        return value
+    except ValueError:
+      print('You must enter an integer.\n')
+
+def clear_cli() -> None:
+  '''
+  Clears the CLI.
+  '''
+  os.system('cls' if os.name == 'nt' else 'clear')
