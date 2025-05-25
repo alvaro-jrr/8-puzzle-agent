@@ -40,9 +40,9 @@ def main() -> None:
     problem = EightPuzzleProblem(initial_state, GOAL_STATE)
 
     # Solve the problem.
-    start_time = time.time()
+    start_time = time.perf_counter()
     result = agent.solve(problem)
-    end_time = time.time()
+    end_time = time.perf_counter()
 
     # The time taken to solve the problem.
     time_taken = end_time - start_time
