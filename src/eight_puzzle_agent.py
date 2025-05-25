@@ -66,7 +66,7 @@ class EightPuzzleAgent:
       explored.add(node_state_tuple)
 
       # Remove the node from the frontier states.
-      if (len(frontier_states) > 0):
+      if (node_state_tuple in frontier_states):
         frontier_states.remove(node_state_tuple)
 
       # Explore the child nodes for the actions.
@@ -111,7 +111,7 @@ class EightPuzzleAgent:
         return Solution(node)
 
       # Remove the node from the frontier states.
-      if (len(frontier_states) > 0):
+      if (node_state_tuple in frontier_states):
         frontier_states.remove(node_state_tuple)
 
       explored.add(node_state_tuple)
