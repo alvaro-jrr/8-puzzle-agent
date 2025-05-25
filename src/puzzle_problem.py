@@ -18,7 +18,7 @@ class PuzzleProblem:
   '''
   
   # The size of the board.
-  BOARD_SIZE = 2
+  BOARD_SIZE = 3
 
   # The initial state of the board.
   initial_state: list[list[int]]

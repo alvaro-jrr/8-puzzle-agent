@@ -1,9 +1,9 @@
 from enum import Enum
 import time
 
-from eight_puzzle_agent import EightPuzzleAgent, EightPuzzleAgentType
-from eight_puzzle_problem import EightPuzzleProblem
 import helpers
+from puzzle_agent import PuzzleAgent, PuzzleAgentType
+from puzzle_problem import PuzzleProblem
 from result import Failure, Solution
 
 def main() -> None:
@@ -29,15 +29,15 @@ def main() -> None:
 
       # Get the agent type when the agent is not set.
       agent_type = get_agent_type()
-      agent = EightPuzzleAgent(agent_type)
+      agent = PuzzleAgent(agent_type)
 
     print(f'# Solving with {agent.type.name} agent\n')
 
     # The initial state configuration.
-    initial_state = EightPuzzleProblem.generate_random_solvable_state(GOAL_STATE)
+    initial_state = PuzzleProblem.generate_random_solvable_state(GOAL_STATE)
 
     # The problem.
-    problem = EightPuzzleProblem(initial_state, GOAL_STATE)
+    problem = PuzzleProblem(initial_state, GOAL_STATE)
 
     # Solve the problem.
     start_time = time.perf_counter()
@@ -66,7 +66,7 @@ def main() -> None:
       if (next_action == NextAction.CHANGE_AGENT_TYPE):
         agent = None
 
-def get_agent_type() -> EightPuzzleAgentType:
+def get_agent_type() -> PuzzleAgentType:
   '''
   Get the agent type.
   '''
@@ -86,7 +86,7 @@ def get_agent_type() -> EightPuzzleAgentType:
     'Invalid agent type.',
   )
 
-  return [EightPuzzleAgentType.INFORMED, EightPuzzleAgentType.UNINFORMED][agent_type - 1]
+  return [PuzzleAgentType.INFORMED, PuzzleAgentType.UNINFORMED][agent_type - 1]
 
 
 class NextAction(Enum):
