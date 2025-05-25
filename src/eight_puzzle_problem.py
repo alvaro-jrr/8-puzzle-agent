@@ -32,10 +32,6 @@ class EightPuzzleProblem:
     if not EightPuzzleProblem.is_valid_board(goal_state):
       raise AssertionError("Invalid goal state")
 
-    # Check if the initial state can reach the goal state.
-    if not EightPuzzleProblem.can_reach_goal(initial_state, goal_state):
-      raise AssertionError("Goal state cannot be reached from given initial state")
-
     self.initial_state = initial_state
     self.goal_state = goal_state
 

@@ -33,6 +33,7 @@ class FailureType(Enum):
   UNSOLVABLE = 0
   SOLUTION_NOT_FOUND = 1
   NOT_IMPLEMENTED = 2
+  UNSOLVABLE_FROM_INITIAL_STATE = 3
 
 class Failure:
   '''
@@ -46,7 +47,8 @@ class Failure:
   _reasons: dict[FailureType, str] = {
     FailureType.UNSOLVABLE: "The problem is unsolvable.",
     FailureType.SOLUTION_NOT_FOUND: "No solution was found.",
-    FailureType.NOT_IMPLEMENTED: "The method is not implemented."
+    FailureType.NOT_IMPLEMENTED: "The method is not implemented.",
+    FailureType.UNSOLVABLE_FROM_INITIAL_STATE: "The initial state cannot reach the goal state."
   }
 
   def __init__(self, type: FailureType):

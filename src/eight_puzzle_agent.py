@@ -28,6 +28,9 @@ class EightPuzzleAgent:
     '''
     Solve the 8-puzzle problem using the given agent type.
     '''
+    # Check if the initial state can reach the goal state.
+    if not EightPuzzleProblem.can_reach_goal(problem.initial_state, problem.goal_state):
+      return Failure(FailureType.UNSOLVABLE)
 
     # Apply an informed search algorithm.
     if (self.type == EightPuzzleAgentType.INFORMED):
