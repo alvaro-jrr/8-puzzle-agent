@@ -160,6 +160,45 @@ class EightPuzzleProblem:
     '''
     return tuple(tuple(row) for row in state)
 
+  @staticmethod
+  def get_position(state: list[list[int]], tile: int) -> tuple[int, int]:
+    '''
+    Get the position of the tile in the state.
+    '''
+    for row_index, row in enumerate(state):
+      for column_index, tile in enumerate(row):
+        if (tile == tile):
+          return (row_index, column_index)
+
+  def __get_manhattan_distance(self, state: list[list[int]]) -> int:
+    '''
+    Get the Manhattan distance of the state.
+    '''
+    distance: int = 0
+
+    for state_x, row in enumerate(state):
+      for state_y, tile in enumerate(row):
+        if (tile == 0):
+          continue
+
+        (goal_x, goal_y) = self.get_position(self.goal_state, tile)
+
+        # Calculate the distance in the x-axis.
+        x_distance = 0 if state_x == goal_x else abs(state_x - goal_x)
+
+        # Calculate the distance in the y-axis.
+        y_distance = 0 if state_y == goal_y else abs(state_y - goal_y)
+
+        distance += x_distance + y_distance
+
+    return distance
+
+  def estimate_heuristic(self, state: list[list[int]]) -> int:
+    '''
+    Estimate the heuristic of the state.
+    '''
+    return self.__get_manhattan_distance(state)
+
   def goal_test(self, state: list[list[int]]) -> bool:
     '''
     Check if the state is the goal state.
