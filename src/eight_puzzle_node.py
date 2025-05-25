@@ -41,8 +41,7 @@ class EightPuzzleNode:
     (step_cost, state) = problem.result(parent.state, action)
 
     # Estimate the cost optionally.
-    if (calculate_cost_to_goal):
-      cost_to_goal = problem.estimate_heuristic(state)
+    cost_to_goal = problem.estimate_heuristic(state) if calculate_cost_to_goal else 0
 
     return EightPuzzleNode(state, parent, action, parent.path_cost + step_cost, cost_to_goal)
   
