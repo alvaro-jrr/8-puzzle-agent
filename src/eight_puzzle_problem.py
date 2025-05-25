@@ -99,14 +99,21 @@ class EightPuzzleProblem:
         return state
 
   @staticmethod
+  def get_position(state: list[list[int]], target_tile: int) -> tuple[int, int]:
+    '''
+    Get the position of the tile in the state.
+    '''
+    for row_index, row in enumerate(state):
+      for column_index, tile in enumerate(row):
+        if (tile == target_tile):
+          return (row_index, column_index)
+
+  @staticmethod
   def get_blank_tile_position(state: list[list[int]]) -> tuple[int, int]:
     '''
     Returns the position of the blank tile in the board.
     '''
-    for i, row in enumerate(state):
-      for j, tile in enumerate(row):
-        if tile == 0:
-          return (i, j)
+    return EightPuzzleProblem.get_position(state, 0)
 
   @staticmethod
   def get_swap_tile_position(state: list[list[int]], action: EightPuzzleAction) -> tuple[int, int]:
@@ -159,16 +166,6 @@ class EightPuzzleProblem:
     Convert the state to a tuple.
     '''
     return tuple(tuple(row) for row in state)
-
-  @staticmethod
-  def get_position(state: list[list[int]], tile: int) -> tuple[int, int]:
-    '''
-    Get the position of the tile in the state.
-    '''
-    for row_index, row in enumerate(state):
-      for column_index, tile in enumerate(row):
-        if (tile == tile):
-          return (row_index, column_index)
 
   def __get_manhattan_distance(self, state: list[list[int]]) -> int:
     '''
