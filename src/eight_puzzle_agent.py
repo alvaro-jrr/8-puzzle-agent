@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Union
 
 from eight_puzzle_node import EightPuzzleNode
+from eight_puzzle_node_priority_queue import EightPuzzleNodePriorityQueue
 from eight_puzzle_problem import EightPuzzleProblem
 from result import Failure, FailureType, Solution
 
@@ -30,7 +31,7 @@ class EightPuzzleAgent:
 
     # Apply an informed search algorithm.
     if (self.type == EightPuzzleAgentType.INFORMED):
-      return Failure(FailureType.NOT_IMPLEMENTED);
+      return self.a_star_search(problem)
 
     # Apply an uninformed search algorithm.
     return self.breadth_first_search(problem)
@@ -78,5 +79,57 @@ class EightPuzzleAgent:
           # Add the child to the frontier.
           frontier.append(child)
           frontier_states.add(child_state_tuple)
+    
+    return Failure(FailureType.SOLUTION_NOT_FOUND)
+
+  def a_star_search(self, problem: EightPuzzleProblem) -> Union[Solution, Failure]:
+    '''
+    A* search for the 8-puzzle problem.
+    '''
+    node = EightPuzzleNode(state=problem.initial_state, path_cost=0)
+    
+    # The open priority queue with the initial state as the first element.
+    frontier = EightPuzzleNodePriorityQueue()
+    frontier.append(node)
+
+    # The set of frontier states.
+    frontier_states: set[tuple[tuple[int, ...], ...]] = set()
+
+    # The set of explored states.
+    explored: set[tuple[tuple[int, ...], ...]] = set()
+
+    while not frontier.empty():
+      # Get the node with the lowest cost.
+      node = frontier.pop()
+      node_state_tuple = problem.state_to_tuple(node.state)
+
+      # If the node is the goal state, then return the solution.
+      if (problem.goal_test(node.state)):
+        return Solution(node)
+
+      # Remove the node from the frontier states.
+      if (len(frontier_states) > 0):
+        frontier_states.remove(node_state_tuple)
+
+      explored.add(node_state_tuple)
+
+      for action in problem.actions(node.state):
+        child = EightPuzzleNode.child_node(problem, node, action, calculate_cost_to_goal=True)
+        child_state_tuple = problem.state_to_tuple(child.state)
+
+        if ((child_state_tuple not in explored) and (child_state_tuple not in frontier_states)):
+          # Add the child to the frontier.
+          frontier.append(child)
+          frontier_states.add(child_state_tuple)
+        elif (child_state_tuple in frontier_states):
+          # Get the frontier node with the same state.
+          frontier_node = frontier.find_by_state(child.state)
+
+          # Wether the current element in the frontier should be replaced.
+          should_replace = isinstance(frontier_node, EightPuzzleNode) and (child.estimated_solution_cost < frontier_node.estimated_solution_cost)
+          
+          # Replace the frontier node as long as the new estimated solution cost is lower.
+          if should_replace:
+            frontier.replace(frontier_node, child)
     
     return Failure(FailureType.SOLUTION_NOT_FOUND)
