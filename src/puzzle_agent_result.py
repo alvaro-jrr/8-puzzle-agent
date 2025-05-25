@@ -3,7 +3,7 @@ from enum import Enum
 from puzzle_node import PuzzleNode
 from puzzle_problem import PuzzleProblem
 
-class Solution:
+class PuzzleAgentSolution:
   '''
   The solution to the problem.
   '''
@@ -28,32 +28,32 @@ class Solution:
       if (step < len(states) - 1):
         print()
 
-class FailureType(Enum):
+class PuzzleAgentFailureType(Enum):
   '''
-  The type of failure for the 8-puzzle problem.
+  The type of failure for the puzzle problem.
   '''
   UNSOLVABLE = 0
   SOLUTION_NOT_FOUND = 1
   NOT_IMPLEMENTED = 2
   UNSOLVABLE_FROM_INITIAL_STATE = 3
 
-class Failure:
+class PuzzleAgentFailure:
   '''
   The failure to the problem.
   '''
 
   # The type of failure.
-  type: FailureType
+  type: PuzzleAgentFailureType
 
   # The set of failures and their reasons.
-  _reasons: dict[FailureType, str] = {
-    FailureType.UNSOLVABLE: "The problem is unsolvable.",
-    FailureType.SOLUTION_NOT_FOUND: "No solution was found.",
-    FailureType.NOT_IMPLEMENTED: "The method is not implemented.",
-    FailureType.UNSOLVABLE_FROM_INITIAL_STATE: "The initial state cannot reach the goal state."
+  _reasons: dict[PuzzleAgentFailureType, str] = {
+    PuzzleAgentFailureType.UNSOLVABLE: "The problem is unsolvable.",
+    PuzzleAgentFailureType.SOLUTION_NOT_FOUND: "No solution was found.",
+    PuzzleAgentFailureType.NOT_IMPLEMENTED: "The method is not implemented.",
+    PuzzleAgentFailureType.UNSOLVABLE_FROM_INITIAL_STATE: "The initial state cannot reach the goal state."
   }
 
-  def __init__(self, type: FailureType):
+  def __init__(self, type: PuzzleAgentFailureType):
     self.type = type
 
   def get_reason(self) -> str:

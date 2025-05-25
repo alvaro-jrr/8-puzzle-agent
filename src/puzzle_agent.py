@@ -1,10 +1,14 @@
 from enum import Enum
 from typing import Union
 
+from puzzle_agent_result import (
+  PuzzleAgentFailure,
+  PuzzleAgentFailureType,
+  PuzzleAgentSolution,
+)
 from puzzle_node import PuzzleNode
 from puzzle_node_priority_queue import PuzzleNodePriorityQueue
 from puzzle_problem import PuzzleProblem
-from result import Failure, FailureType, Solution
 
 class PuzzleAgentType(Enum):
   '''
@@ -24,13 +28,13 @@ class PuzzleAgent:
   def __init__(self, type: PuzzleAgentType):
     self.type = type
 
-  def solve(self, problem: PuzzleProblem) -> Union[Solution, Failure]:
+  def solve(self, problem: PuzzleProblem) -> Union[PuzzleAgentSolution, PuzzleAgentFailure]:
     '''
     Solve the puzzle problem using the given agent type.
     '''
     # Check if the initial state can reach the goal state.
     if not PuzzleProblem.can_reach_goal(problem.initial_state, problem.goal_state):
-      return Failure(FailureType.UNSOLVABLE)
+      return PuzzleAgentFailure(PuzzleAgentFailureType.UNSOLVABLE)
 
     # Apply an informed search algorithm.
     if (self.type == PuzzleAgentType.INFORMED):
@@ -39,7 +43,7 @@ class PuzzleAgent:
     # Apply an uninformed search algorithm.
     return self.breadth_first_search(problem)
 
-  def breadth_first_search(self, problem: PuzzleProblem) -> Union[Solution, Failure]:
+  def breadth_first_search(self, problem: PuzzleProblem) -> Union[PuzzleAgentSolution, PuzzleAgentFailure]:
     '''
     Breadth-first search for the puzzle problem.
     '''
@@ -47,7 +51,7 @@ class PuzzleAgent:
 
     # The initial state is the goal state.
     if (problem.goal_test(node.state)):
-      return Solution(node)
+      return PuzzleAgentSolution(node)
 
     # The list of nodes to be explored.
     frontier: list[PuzzleNode] = [node]
@@ -77,15 +81,15 @@ class PuzzleAgent:
         # If the state is not explored and not in frontier, then is a new state to check.
         if ((child_state_tuple not in explored) and (child_state_tuple not in frontier_states)):
           if (problem.goal_test(child.state)):
-            return Solution(child)
+            return PuzzleAgentSolution(child)
 
           # Add the child to the frontier.
           frontier.append(child)
           frontier_states.add(child_state_tuple)
     
-    return Failure(FailureType.SOLUTION_NOT_FOUND)
+    return PuzzleAgentFailure(PuzzleAgentFailureType.SOLUTION_NOT_FOUND)
 
-  def a_star_search(self, problem: PuzzleProblem) -> Union[Solution, Failure]:
+  def a_star_search(self, problem: PuzzleProblem) -> Union[PuzzleAgentSolution, PuzzleAgentFailure]:
     '''
     A* search for the puzzle problem.
     '''
@@ -108,7 +112,7 @@ class PuzzleAgent:
 
       # If the node is the goal state, then return the solution.
       if (problem.goal_test(node.state)):
-        return Solution(node)
+        return PuzzleAgentSolution(node)
 
       # Remove the node from the frontier states.
       if (node_state_tuple in frontier_states):
@@ -135,4 +139,4 @@ class PuzzleAgent:
           if should_replace:
             frontier.replace(frontier_node, child)
     
-    return Failure(FailureType.SOLUTION_NOT_FOUND)
+    return PuzzleAgentFailure(PuzzleAgentFailureType.SOLUTION_NOT_FOUND)

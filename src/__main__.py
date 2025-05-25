@@ -3,8 +3,8 @@ import time
 
 import helpers
 from puzzle_agent import PuzzleAgent, PuzzleAgentType
+from puzzle_agent_result import PuzzleAgentFailure, PuzzleAgentSolution
 from puzzle_problem import PuzzleProblem
-from result import Failure, Solution
 
 def main() -> None:
   # The goal state configuration.
@@ -48,7 +48,7 @@ def main() -> None:
     time_taken = end_time - start_time
 
     # Handle the result.
-    if (isinstance(result, Solution)):
+    if (isinstance(result, PuzzleAgentSolution)):
       on_solution(result, time_taken)
     else:
       on_failure(result, time_taken)
@@ -123,7 +123,7 @@ def get_next_action() -> NextAction:
   # Return the action.
   return [NextAction.SOLVE_NEW_PROBLEM, NextAction.CHANGE_AGENT_TYPE, NextAction.EXIT][action - 1]
 
-def on_solution(solution: Solution, time_taken: float) -> None:
+def on_solution(solution: PuzzleAgentSolution, time_taken: float) -> None:
   '''
   Handle the solution.
   '''
@@ -138,7 +138,7 @@ def on_solution(solution: Solution, time_taken: float) -> None:
   solution.show()
   print()
 
-def on_failure(failure: Failure, time_taken: float) -> None:
+def on_failure(failure: PuzzleAgentFailure, time_taken: float) -> None:
   '''
   Handle the failure.
   '''
