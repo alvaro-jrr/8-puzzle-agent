@@ -147,7 +147,7 @@ def on_failure(failure: PuzzleAgentFailure, time_taken: float) -> None:
   print(f'Time taken: {time_taken} seconds\n')
 
   # The reason for the failure.
-  print(f'Failure: {failure.get_reason()}')
+  print(f'Failure: {failure.get_reason()}\n')
 
 if __name__ == '__main__':
   main()
