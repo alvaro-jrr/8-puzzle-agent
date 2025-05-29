@@ -51,7 +51,7 @@ class PuzzleAgent:
 
     # The initial state is the goal state.
     if (problem.goal_test(node.state)):
-      return PuzzleAgentSolution(node)
+      return PuzzleAgentSolution(node, expanded_nodes=0)
 
     # The list of nodes to be explored.
     frontier: list[PuzzleNode] = [node]
@@ -81,7 +81,7 @@ class PuzzleAgent:
         # If the state is not explored and not in frontier, then is a new state to check.
         if ((child_state_tuple not in explored) and (child_state_tuple not in frontier_states)):
           if (problem.goal_test(child.state)):
-            return PuzzleAgentSolution(child)
+            return PuzzleAgentSolution(child, expanded_nodes=len(explored))
 
           # Add the child to the frontier.
           frontier.append(child)
@@ -112,7 +112,7 @@ class PuzzleAgent:
 
       # If the node is the goal state, then return the solution.
       if (problem.goal_test(node.state)):
-        return PuzzleAgentSolution(node)
+        return PuzzleAgentSolution(node, expanded_nodes=len(explored))
 
       # Remove the node from the frontier states.
       if (node_state_tuple in frontier_states):

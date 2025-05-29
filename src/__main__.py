@@ -134,6 +134,9 @@ def on_solution(solution: PuzzleAgentSolution, time_taken: float) -> None:
   # The path cost to the goal state.
   print(f'Path cost: {solution.node.path_cost}\n')
 
+  # The number of expanded nodes.
+  print(f'Expanded nodes: {solution.expanded_nodes}\n')
+
   # Show the paths to the goal state.
   solution.show()
   print()

@@ -11,8 +11,12 @@ class PuzzleAgentSolution:
   # The node that represents the solution.
   node: PuzzleNode
 
-  def __init__(self, node: PuzzleNode):
+  # The number of expanded nodes.
+  expanded_nodes: int
+
+  def __init__(self, node: PuzzleNode, expanded_nodes: int):
     self.node = node
+    self.expanded_nodes = expanded_nodes
 
   def show(self) -> None:
     '''
