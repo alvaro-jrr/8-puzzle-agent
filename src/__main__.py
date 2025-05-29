@@ -14,24 +14,25 @@ def main() -> None:
     [7, 6, 5]
   ]
 
-  # The agent.
-  agent = None
-
   # Whether the program is running.
   running: bool = True
+
+  # The menu option.
+  menu_option = None
+
+  # The agents.
+  uninformed_agent = PuzzleAgent(PuzzleAgentType.UNINFORMED)
+  informed_agent = PuzzleAgent(PuzzleAgentType.INFORMED)
 
   # The main loop.
   while running:
     print(f'----- 8-Puzzle Agent -----\n')
 
-    if (agent is None):
-      print('# Choose the agent type')
+    if (menu_option is None):
+      print('# Choose an option')
 
-      # Get the agent type when the agent is not set.
-      agent_type = get_agent_type()
-      agent = PuzzleAgent(agent_type)
-
-    print(f'# Solving with {agent.type.name} agent\n')
+      # Get the menu option.
+      menu_option = get_menu_option()
 
     # The initial state configuration.
     initial_state = PuzzleProblem.generate_random_solvable_state(GOAL_STATE)
@@ -39,19 +40,12 @@ def main() -> None:
     # The problem.
     problem = PuzzleProblem(initial_state, GOAL_STATE)
 
-    # Solve the problem.
-    start_time = time.perf_counter()
-    result = agent.solve(problem)
-    end_time = time.perf_counter()
-
-    # The time taken to solve the problem.
-    time_taken = end_time - start_time
-
-    # Handle the result.
-    if (isinstance(result, PuzzleAgentSolution)):
-      on_solution(result, time_taken)
+    if (menu_option == MenuOption.SOLVE_WITH_INFORMED):
+      solve_with_specific_agent(informed_agent, problem)
+    elif (menu_option == MenuOption.SOLVE_WITH_UNINFORMED):
+      solve_with_specific_agent(uninformed_agent, problem)
     else:
-      on_failure(result, time_taken)
+      compare_agents(problem, informed_agent, uninformed_agent)
 
     print("# What's next?")
 
@@ -63,38 +57,103 @@ def main() -> None:
     else:
       helpers.clear_cli()
 
-      if (next_action == NextAction.CHANGE_AGENT_TYPE):
-        agent = None
+      if (next_action == NextAction.CHANGE_MENU_OPTION):
+        menu_option = None
 
-def get_agent_type() -> PuzzleAgentType:
+class MenuOption(Enum):
   '''
-  Get the agent type.
+  The menu option.
+  '''
+  SOLVE_WITH_INFORMED = 0
+  SOLVE_WITH_UNINFORMED = 1
+  COMPARE_AGENTS = 2
+
+def get_menu_option() -> MenuOption:
+  '''
+  Get the menu option.
   '''
   options = [
-    'Informed (A*)',
-    'Uninformed (BFS)',
+    'Solve with Informed Agent (A*)',
+    'Solve with Uninformed Agent (BFS)',
+    'Compare Agents',
   ]
 
   # Show the options.
   helpers.show_options(options)
 
-  # Ask for the agent type.
-  agent_type = helpers.get_range_input(
-    'Enter the agent type: ',
+  # Ask for the menu option.
+  option = helpers.get_range_input(
+    'Select an option: ',
     1,
     len(options),
-    'Invalid agent type.',
+    'Invalid option.',
   )
 
-  return [PuzzleAgentType.INFORMED, PuzzleAgentType.UNINFORMED][agent_type - 1]
+  return [MenuOption.SOLVE_WITH_INFORMED, MenuOption.SOLVE_WITH_UNINFORMED, MenuOption.COMPARE_AGENTS][option - 1]
 
+def solve_with_specific_agent(agent: PuzzleAgent, problem: PuzzleProblem) -> None:
+  '''
+  Solve a problem with a specific agent.
+  '''
+  print(f'# Solving with {agent.type.name} agent\n')
 
+  # Solve the problem.
+  start_time = time.perf_counter()
+  result = agent.solve(problem)
+  end_time = time.perf_counter()
+
+  # The time taken to solve the problem.
+  time_taken = end_time - start_time
+
+  # Handle the result.
+  if (isinstance(result, PuzzleAgentSolution)):
+    on_solution(result, time_taken)
+  else:
+    on_failure(result, time_taken)
+
+def compare_agents(problem: PuzzleProblem, informed_agent: PuzzleAgent, uninformed_agent: PuzzleAgent) -> None:
+  '''
+  Compare the agents.
+  '''
+  print(f'# Comparing agents\n')
+
+  print(f'> Initial state:\n')
+  PuzzleProblem.display_state(problem.initial_state)
+  print()
+
+  # Compare the agents.
+  compare_agent(informed_agent, problem)
+  compare_agent(uninformed_agent, problem)
+
+def compare_agent(agent: PuzzleAgent, problem: PuzzleProblem) -> None:
+  '''
+  Compare the agent.
+  '''
+  print(f'# Solving with {agent.type.name} agent\n')
+  
+  # Solve the problem.
+  start_time = time.perf_counter()
+  result = agent.solve(problem)
+  end_time = time.perf_counter()
+
+  # The time taken to solve the problem.
+  time_taken = end_time - start_time
+
+  # Handle the result.
+  if (isinstance(result, PuzzleAgentSolution)):
+    print(f'Time taken: {time_taken} seconds')
+    print(f'Path cost: {result.node.path_cost}')
+    print(f'Expanded nodes: {result.expanded_nodes}\n')
+  else:
+    print(f'Time taken: {time_taken} seconds')
+    print(f'Failure: {result.get_reason()}\n')
+    
 class NextAction(Enum):
   '''
   The next action to take.
   '''
   SOLVE_NEW_PROBLEM = 0
-  CHANGE_AGENT_TYPE = 1
+  CHANGE_MENU_OPTION = 1
   EXIT = 2
 
 
@@ -105,7 +164,7 @@ def get_next_action() -> NextAction:
   # The options.
   options = [
     'Solve a new problem',
-    'Change agent type',
+    'Change menu option',
     'Exit',
   ]
 
@@ -121,7 +180,7 @@ def get_next_action() -> NextAction:
   )
 
   # Return the action.
-  return [NextAction.SOLVE_NEW_PROBLEM, NextAction.CHANGE_AGENT_TYPE, NextAction.EXIT][action - 1]
+  return [NextAction.SOLVE_NEW_PROBLEM, NextAction.CHANGE_MENU_OPTION, NextAction.EXIT][action - 1]
 
 def on_solution(solution: PuzzleAgentSolution, time_taken: float) -> None:
   '''

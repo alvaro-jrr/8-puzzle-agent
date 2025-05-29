@@ -100,6 +100,17 @@ class PuzzleProblem:
         return state
 
   @staticmethod
+  def generate_random_unsolvable_state(goal_state: list[list[int]]) -> list[list[int]]:
+    '''
+    Generate a random unsolvable board state.
+    '''
+    while True:
+      state = PuzzleProblem.generate_random_state()
+
+      if (not PuzzleProblem.can_reach_goal(state, goal_state)):
+        return state
+
+  @staticmethod
   def get_position(state: list[list[int]], target_tile: int) -> tuple[int, int]:
     '''
     Get the position of the tile in the state.
@@ -190,6 +201,15 @@ class PuzzleProblem:
         distance += x_distance + y_distance
 
     return distance
+
+  @staticmethod
+  def display_state(state: list[list[int]]) -> None:
+    '''
+    Display the state.
+    '''
+    for row in state:
+      row_format = '|' + ' '.join(['{}'] * PuzzleProblem.BOARD_SIZE) + '|'
+      print(f'{row_format.format(*row)}') 
 
   def estimate_heuristic(self, state: list[list[int]]) -> int:
     '''
